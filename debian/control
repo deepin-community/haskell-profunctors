@@ -1,0 +1,78 @@
+Source: haskell-profunctors
+Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
+Uploaders: Clint Adams <clint@debian.org>
+Priority: optional
+Section: haskell
+Rules-Requires-Root: no
+Build-Depends:
+ cdbs,
+ debhelper (>= 10),
+ ghc (>= 8),
+ ghc-prof,
+ haskell-devscripts (>= 0.13),
+ libghc-base-orphans-dev (>= 0.4),
+ libghc-base-orphans-dev (<< 0.9),
+ libghc-base-orphans-prof,
+ libghc-bifunctors-dev (<< 6),
+ libghc-bifunctors-dev (>= 5.2),
+ libghc-bifunctors-prof,
+ libghc-comonad-dev (<< 6),
+ libghc-comonad-dev (>= 4),
+ libghc-comonad-prof,
+ libghc-contravariant-dev (<< 2),
+ libghc-contravariant-dev (>= 1),
+ libghc-contravariant-prof,
+ libghc-distributive-dev (<< 1),
+ libghc-distributive-dev (>= 0.4.4),
+ libghc-distributive-prof,
+ libghc-tagged-dev (>= 0.4.4),
+ libghc-tagged-dev (<< 1),
+ libghc-tagged-prof,
+Build-Depends-Indep:
+ ghc-doc,
+ libghc-base-orphans-doc,
+ libghc-bifunctors-doc,
+ libghc-comonad-doc,
+ libghc-contravariant-doc,
+ libghc-distributive-doc,
+ libghc-tagged-doc,
+Standards-Version: 4.4.0
+Homepage: https://github.com/ekmett/profunctors/
+Vcs-Browser: https://salsa.debian.org/haskell-team/DHG_packages/tree/master/p/haskell-profunctors
+Vcs-Git: https://salsa.debian.org/haskell-team/DHG_packages.git [p/haskell-profunctors]
+
+Package: libghc-profunctors-dev
+Architecture: any
+Depends: ${haskell:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Recommends: ${haskell:Recommends}
+Suggests: ${haskell:Suggests}
+Provides: ${haskell:Provides}
+Description: Haskell 98 Profunctors${haskell:ShortBlurb}
+ Profunctors are a generalization of relations and also of bimodules.
+ They are related to the notion of correspondences.
+ .
+ ${haskell:Blurb}
+
+Package: libghc-profunctors-prof
+Architecture: any
+Depends: ${haskell:Depends}, ${misc:Depends}
+Recommends: ${haskell:Recommends}
+Suggests: ${haskell:Suggests}
+Provides: ${haskell:Provides}
+Description: Haskell 98 Profunctors${haskell:ShortBlurb}
+ Profunctors are a generalization of relations and also of bimodules.
+ They are related to the notion of correspondences.
+ .
+ ${haskell:Blurb}
+
+Package: libghc-profunctors-doc
+Architecture: all
+Section: doc
+Depends: ${haskell:Depends}, ${misc:Depends}
+Recommends: ${haskell:Recommends}
+Suggests: ${haskell:Suggests}
+Description: Haskell 98 Profunctors${haskell:ShortBlurb}
+ Profunctors are a generalization of relations and also of bimodules.
+ They are related to the notion of correspondences.
+ .
+ ${haskell:Blurb}
