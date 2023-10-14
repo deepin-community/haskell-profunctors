@@ -1,6 +1,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE Safe #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2015 Edward Kmett
@@ -22,6 +23,8 @@ import Data.Profunctor.Monad
 -- 'unit' '.' 'counit' ≡ 'id'
 -- 'counit' '.' 'unit' ≡ 'id'
 -- @
+
+-- ProfunctorAdjunction :: ((Type -> Type -> Type) -> (Type -> Type -> Type)) -> ((Type -> Type -> Type) -> (Type -> Type -> Type)) -> Constraint
 class (ProfunctorFunctor f, ProfunctorFunctor u) => ProfunctorAdjunction f u | f -> u, u -> f where
   unit   :: Profunctor p => p :-> u (f p)
   counit :: Profunctor p => f (u p) :-> p

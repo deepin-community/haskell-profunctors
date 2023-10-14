@@ -3,6 +3,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE Safe #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2014-2015 Edward Kmett
@@ -42,6 +43,7 @@ import Data.Profunctor.Strong
 import Data.Profunctor.Types
 import Data.Profunctor.Unsafe
 import Data.Tagged
+
 #if __GLASGOW_HASKELL__ < 710
 import Data.Traversable
 import Prelude hiding (id,(.),sequence)
@@ -197,7 +199,7 @@ instance ProfunctorFunctor TambaraSum where
   promap f (TambaraSum p) = TambaraSum (f p)
 
 instance ProfunctorComonad TambaraSum where
-  proextract (TambaraSum p)   = dimap Left (\(Left a) -> a) p
+  proextract (TambaraSum p)   = dimap Left fromEither p
   produplicate (TambaraSum p) = TambaraSum (TambaraSum $ dimap hither yon p) where
     hither :: Either (Either a b) c -> Either a (Either b c)
     hither (Left (Left x))   = Left x
@@ -214,7 +216,7 @@ instance Profunctor p => Profunctor (TambaraSum p) where
   {-# INLINE dimap #-}
 
 instance Profunctor p => Choice (TambaraSum p) where
-  left' = runTambaraSum . produplicate
+  left' p = runTambaraSum $ produplicate p
   {-# INLINE left' #-}
 
 instance Category p => Category (TambaraSum p) where
@@ -238,7 +240,10 @@ tambaraSum f p = TambaraSum $ f $ left' p
 -- 'untambaraSum' '.' 'tambaraSum' ≡ 'id'
 -- @
 untambaraSum :: Profunctor q => (p :-> TambaraSum q) -> p :-> q
-untambaraSum f p = dimap Left (\(Left a) -> a) $ runTambaraSum $ f p
+untambaraSum f p = dimap Left fromEither $ runTambaraSum $ f p
+
+fromEither :: Either a a -> a
+fromEither = either id id
 
 ----------------------------------------------------------------------------
 -- * PastroSum
@@ -249,6 +254,9 @@ untambaraSum f p = dimap Left (\(Left a) -> a) $ runTambaraSum $ f p
 -- PastroSum freely constructs strength with respect to Either.
 data PastroSum p a b where
   PastroSum :: (Either y z -> b) -> p x y -> (a -> Either x z) -> PastroSum p a b
+
+instance Functor (PastroSum p a) where
+  fmap f (PastroSum l m r) = PastroSum (f . l) m r
 
 instance Profunctor (PastroSum p) where
   dimap f g (PastroSum l m r) = PastroSum (g . l) m (r . f)
@@ -265,7 +273,7 @@ instance ProfunctorFunctor PastroSum where
   promap f (PastroSum l m r) = PastroSum l (f m) r
 
 instance ProfunctorMonad PastroSum where
-  proreturn p = PastroSum (\(Left a)-> a) p Left
+  proreturn p = PastroSum fromEither p Left
   projoin (PastroSum l (PastroSum m n o) q) = PastroSum lm n oq where
     oq a = case q a of
       Left b -> Left <$> o b
@@ -401,7 +409,7 @@ instance Functor (CotambaraSum p a) where
 -- 'uncotambaraSum' '.' 'cotambaraSum' ≡ 'id'
 -- @
 cotambaraSum :: Cochoice p => (p :-> q) -> p :-> CotambaraSum q
-cotambaraSum = CotambaraSum
+cotambaraSum f = CotambaraSum f
 
 -- |
 -- @
@@ -419,6 +427,9 @@ uncotambaraSum f p = proextract (f p)
 --
 -- 'CopastroSum' freely constructs costrength with respect to 'Either' (aka 'Choice')
 newtype CopastroSum p a b = CopastroSum { runCopastroSum :: forall r. Cochoice r => (forall x y. p x y -> r x y) -> r a b }
+
+instance Functor (CopastroSum p a) where
+  fmap f (CopastroSum h) = CopastroSum $ \ n -> rmap f (h n)
 
 instance Profunctor (CopastroSum p) where
   dimap f g (CopastroSum h) = CopastroSum $ \ n -> dimap f g (h n)
