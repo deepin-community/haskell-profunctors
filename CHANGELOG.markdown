@@ -1,3 +1,21 @@
+5.6.2 [2021.02.17]
+------------------
+* Add `Semigroup` and `Monoid` instances for `Forget`
+
+5.6.1 [2020.12.31]
+------------------
+* Add `Functor` instances for `PastroSum`, `CopastroSum`, `Environment`,
+  `FreeMapping`, `Pastro`, `Copastro`, `FreeTraversing`, and `Coyoneda`.
+* Explicitly mark modules as `Safe`.
+
+5.6 [2020.10.01]
+----------------
+* Enable the `PolyKinds` extension. The following datatypes now have
+  polymorphic kinds: `(:->)`, `Cayley`, `Procompose`, `Rift`,
+  `ProfunctorFunctor`, `Ran`, `Codensity`, `Prep`, `Coprep`, `Star`, `Costar`,
+  `WrappedArrow`, `Forget`.
+* Allow building with GHC 9.0.
+
 5.5.2 [2020.02.13]
 ------------------
 * Add `Cochoice`, `Costrong`, `Closed`, `Traversing`, and `Mapping` instances

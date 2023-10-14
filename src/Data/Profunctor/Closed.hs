@@ -120,11 +120,11 @@ instance ProfunctorFunctor Closure where
   promap f (Closure p) = Closure (f p)
 
 instance ProfunctorComonad Closure where
-  proextract = dimap const ($ ()) . runClosure
+  proextract p = dimap const ($ ()) $ runClosure p
   produplicate (Closure p) = Closure $ Closure $ dimap uncurry curry p
 
 instance Profunctor p => Closed (Closure p) where
-  closed = runClosure . produplicate
+  closed p = runClosure $ produplicate p
 
 instance Strong p => Strong (Closure p) where
   first' (Closure p) = Closure $ dimap hither yon $ first' p
@@ -194,6 +194,9 @@ unclose f p = dimap const ($ ()) $ runClosure $ f p
 
 data Environment p a b where
   Environment :: ((z -> y) -> b) -> p x y -> (a -> z -> x) -> Environment p a b
+
+instance Functor (Environment p a) where
+  fmap f (Environment l m r) = Environment (f . l) m r
 
 instance Profunctor (Environment p) where
   dimap f g (Environment l m r) = Environment (g . l) m (r . f)

@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE Safe #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2015-2018 Edward Kmett
@@ -140,6 +141,9 @@ instance ProfunctorComonad CofreeMapping where
 -- | @FreeMapping -| CofreeMapping@
 data FreeMapping p a b where
   FreeMapping :: Functor f => (f y -> b) -> p x y -> (a -> f x) -> FreeMapping p a b
+
+instance Functor (FreeMapping p a) where
+  fmap f (FreeMapping l m r) = FreeMapping (f . l) m r
 
 instance Profunctor (FreeMapping p) where
   lmap f (FreeMapping l m r) = FreeMapping l m (r . f)

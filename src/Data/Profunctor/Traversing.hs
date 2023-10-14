@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE Safe #-}
 module Data.Profunctor.Traversing
   ( Traversing(..)
   , CofreeTraversing(..)
@@ -167,6 +168,9 @@ instance ProfunctorComonad CofreeTraversing where
 -- | @FreeTraversing -| CofreeTraversing@
 data FreeTraversing p a b where
   FreeTraversing :: Traversable f => (f y -> b) -> p x y -> (a -> f x) -> FreeTraversing p a b
+
+instance Functor (FreeTraversing p a) where
+  fmap f (FreeTraversing l m r) = FreeTraversing (f . l) m r
 
 instance Profunctor (FreeTraversing p) where
   lmap f (FreeTraversing l m r) = FreeTraversing l m (r . f)
